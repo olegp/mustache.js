@@ -24,6 +24,8 @@ var Mustache = function() {
         this.buffer = []; // TODO: make this non-lazy
       }
 
+      this.root = context;
+
       // fail fast
       if(!this.includes("", template)) {
         if(in_recursion) {
@@ -228,7 +230,15 @@ var Mustache = function() {
       if(value !== undefined) {
         return value;
       }
-      // silently ignore unkown variables
+      context = this.root;
+      var names = name.split(".");
+      while(names.length > 0 && context !== undefined) {
+        context = context[names.shift()];
+      }
+      if(context !== undefined) {
+        return context;
+      }
+      // silently ignore unknown variables
       return "";
     },
 
